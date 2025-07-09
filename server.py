@@ -2,6 +2,7 @@ import json
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
+from more_itertools import chunked
 
 
 def rebuild():
@@ -15,7 +16,8 @@ def rebuild():
     with open("meta_data.json", "r", encoding="utf-8") as books_file:
         books = json.load(books_file)
 
-    rendered_page = template.render(books=books)
+    chunked_books = chunked(books, 2, strict=False)
+    rendered_page = template.render(books=chunked_books)
 
     with open('index.html', 'w', encoding='utf-8') as file:
         file.write(rendered_page)
