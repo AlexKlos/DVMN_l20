@@ -7,10 +7,12 @@ from livereload import Server
 from more_itertools import chunked
 
 
-def render_page(template, books, page_name):
+def render_page(template, books, page_path, current_page, total_pages):
     chunked_books = chunked(books, 2, strict=False)
-    rendered_page = template.render(books=chunked_books)
-    with open(page_name, 'w', encoding='utf-8') as file:
+    rendered_page = template.render(books=chunked_books, 
+                                    current_page=current_page, 
+                                    total_pages=total_pages)
+    with open(page_path, 'w', encoding='utf-8') as file:
         file.write(rendered_page)
 
 
@@ -30,14 +32,15 @@ def rebuild():
     with open("meta_data.json", "r", encoding="utf-8") as books_file:
         books = json.load(books_file)
 
+    total_pages = (len(books) + 9) // 10
     chunked_books = chunked(books, 10, strict=False)
     for i, ten_books in enumerate(chunked_books, 1):
         page_path = folder_name + '/' + page_name + str(i) + '.html'
-        render_page(template, ten_books, page_path)
-
-    # render_page(template, books, 'index.html')
+        render_page(template, ten_books, page_path, i, total_pages)
 
     print('Site rebuild')
+    print('pages ')
+
 
 rebuild()
 
