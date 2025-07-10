@@ -18,4 +18,4 @@
 
 ## Примечание
 - Код написан в учебных целях — это урок в курсе по Python и веб-разработке на сайте [Devman](https://dvmn.org).
-- Ссылка на сайт с плеером - [GitHub Pages](https://alexklos.github.io/DVMN_l20/pages/index1.html)
+- Ссылка на сайт - [GitHub Pages](https://alexklos.github.io/DVMN_l20/pages/index1.html)
