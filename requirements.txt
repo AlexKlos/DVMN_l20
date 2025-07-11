@@ -1,2 +1,3 @@
 Jinja2==3.*
 more-itertools==10.*
+livereload==2.*
