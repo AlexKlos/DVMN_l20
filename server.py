@@ -1,6 +1,11 @@
 import json
 import os
 import shutil
+import textwrap
+import threading
+
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+from urllib.parse import unquote
 
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
@@ -14,6 +19,39 @@ def render_page(template, books, page_path, current_page, total_pages):
                                     total_pages=total_pages)
     with open(page_path, 'w', encoding='utf-8') as file:
         file.write(rendered_page)
+
+
+def serve_txt_files():
+    class TxtAsHtmlHandler(SimpleHTTPRequestHandler):
+        def do_GET(self):
+            path = unquote(self.path.lstrip("/"))
+            if path.endswith(".txt") and os.path.exists(path):
+                with open(path, "r", encoding="utf-8") as f:
+                    text = f.read()
+
+                html = textwrap.dedent(f"""\
+                    <!DOCTYPE html>
+                    <html lang="ru">
+                    <head>
+                      <meta charset="utf-8">
+                      <title>{path}</title>
+                    </head>
+                    <body>
+                      <pre>{text}</pre>
+                    </body>
+                    </html>
+                """)
+
+                self.send_response(200)
+                self.send_header("Content-Type", "text/html; charset=utf-8")
+                self.send_header("Content-Length", str(len(html.encode("utf-8"))))
+                self.end_headers()
+                self.wfile.write(html.encode("utf-8"))
+            else:
+                super().do_GET()
+
+    server = HTTPServer(('localhost', 8000), TxtAsHtmlHandler)
+    server.serve_forever()
 
 
 def rebuild():
@@ -39,11 +77,11 @@ def rebuild():
         render_page(template, ten_books, page_path, i, total_pages)
 
     print('Site rebuild')
-    print('pages ')
 
 
 rebuild()
 
-server = Server()
-server.watch('template.html', rebuild)
-server.serve(root='.', port=8000)
+livereload_server = Server()
+livereload_server.watch('template.html', rebuild)
+threading.Thread(target=livereload_server.serve, kwargs={'port': 35729}, daemon=True).start()
+serve_txt_files()
