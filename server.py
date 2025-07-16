@@ -40,9 +40,9 @@ def rebuild():
     shift_to_count_the_number_of_pages = number_of_rows - 1
     total_pages = (len(books) + shift_to_count_the_number_of_pages) // number_of_rows
     chunked_books = chunked(books, number_of_rows, strict=False)
-    for i, ten_books in enumerate(chunked_books, 1):
-        page_path = folder_name + '/' + page_name + str(i) + '.html'
-        render_page(template, ten_books, page_path, i, total_pages)
+    for page_index, ten_books in enumerate(chunked_books, 1):
+        page_path = folder_name + '/' + page_name + str(page_index) + '.html'
+        render_page(template, ten_books, page_path, page_index, total_pages)
 
     print('Site rebuild')
 
