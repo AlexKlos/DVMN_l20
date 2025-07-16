@@ -44,9 +44,6 @@ def rebuild():
         page_path = folder_name + '/' + page_name + str(page_index) + '.html'
         render_page(template, ten_books, page_path, page_index, total_pages)
 
-    print('Site rebuild')
-
-
 rebuild()
 
 server = Server()
