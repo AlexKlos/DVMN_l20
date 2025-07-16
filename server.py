@@ -7,8 +7,6 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
 from more_itertools import chunked
 
-load_dotenv()
-
 
 def render_page(template, books, page_path, current_page, total_pages):
     number_of_columns = 2
@@ -44,8 +42,16 @@ def rebuild():
         page_path = folder_name + '/' + page_name + str(page_index) + '.html'
         render_page(template, ten_books, page_path, page_index, total_pages)
 
-rebuild()
 
-server = Server()
-server.watch('template.html', rebuild)
-server.serve(root='.', port=8000)
+def main():
+    load_dotenv()
+
+    rebuild()
+
+    server = Server()
+    server.watch('template.html', rebuild)
+    server.serve(root='.', port=8000)
+
+
+if __name__ == '__main__':
+    main()
