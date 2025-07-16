@@ -1,15 +1,13 @@
 import json
 import os
 import shutil
-import textwrap
-import threading
 
-from http.server import HTTPServer, SimpleHTTPRequestHandler
-from urllib.parse import unquote
-
+from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from livereload import Server
 from more_itertools import chunked
+
+load_dotenv()
 
 
 def render_page(template, books, page_path, current_page, total_pages):
@@ -23,8 +21,8 @@ def render_page(template, books, page_path, current_page, total_pages):
 
 
 def rebuild():
-    page_name = 'index'
-    folder_name = 'pages'
+    page_name = os.getenv('PAGE_NAME', 'index')
+    folder_name = os.getenv('FOLDER_NAME', 'pages')
     if os.path.exists(folder_name):
         shutil.rmtree(folder_name)
     os.makedirs(folder_name)
@@ -35,7 +33,7 @@ def rebuild():
     )
     template = env.get_template('template.html')
 
-    with open("meta_data.json", "r", encoding="utf-8") as books_file:
+    with open(os.getenv('DATA_FILE', 'meta_data.json'), "r", encoding="utf-8") as books_file:
         books = json.load(books_file)
 
     number_of_rows = 10
