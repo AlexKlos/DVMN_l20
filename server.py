@@ -31,7 +31,7 @@ def rebuild():
     )
     template = env.get_template('template.html')
 
-    with open(os.getenv('DATA_FILE', 'meta_data.json'), "r", encoding="utf-8") as books_file:
+    with open(os.getenv('DATA_FILE', 'meta_data.json'), 'r', encoding='utf-8') as books_file:
         books = json.load(books_file)
 
     number_of_rows = 10
